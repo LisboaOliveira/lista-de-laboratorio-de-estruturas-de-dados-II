@@ -2,24 +2,12 @@
 #include<math.h>
 #include<locale.h>
 
-
 typedef struct{
     float x1;
     float x2;
 }raiz;
 
-
-raiz x1x2 (int a, int b, int c){
-    raiz raiz;
-   
-    raiz.x1 = (-b + (sqrt(pow(b, 2)-4*a*c)))/(2*a);
-    raiz.x2 = (-b - (sqrt(pow(b, 2)-4*a*c)))/(2*a);
-   
-    return raiz;
-}
-
-
-
+raiz x1x2 (int a, int b, int c);
 
 int main(){
     setlocale(LC_ALL, "Portuguese");
@@ -36,7 +24,7 @@ int main(){
     }while(a==0);
    
     if(pow(b, 2)-(4*a*c) >= 0){
-        //printf("a função %ix²+%ix+%i=0 possui raízes reais!\n", a, b, c);
+        printf("a função %ix²+%ix+%i=0 possui raízes reais!\n", a, b, c);
         raiz = x1x2(a, b, c);
         printf("O valor das raízes é x=%.1f e x=%.1f", raiz.x1, raiz.x2);
     }else{
@@ -46,6 +34,11 @@ int main(){
     return 0;
 }
 
-
-
-
+raiz x1x2 (int a, int b, int c){
+    raiz raiz;
+   
+    raiz.x1 = (-b + (sqrt(pow(b, 2)-4*a*c)))/(2*a);
+    raiz.x2 = (-b - (sqrt(pow(b, 2)-4*a*c)))/(2*a);
+   
+    return raiz;
+}

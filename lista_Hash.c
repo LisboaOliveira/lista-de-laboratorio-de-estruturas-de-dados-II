@@ -73,15 +73,29 @@ int main(){
 
     contato tabelahash[tamanho], novoContato;
     int opcao, chave;
+    char nomeDoArquivo[30];
+    FILE *arquivo;
 
     iniciarTabela(tabelahash);
 
-    FILE *arquivo = fopen("todosOsContatos.txt", "r");
-    if(arquivo == NULL){
-        printf("Erro ao abrir o arquivo.\n");
-        return 1;
-    }
+    do{
+        printf("Iforme o nome do arquivo de contatos:\n");
+        fgets(nomeDoArquivo, sizeof(nomeDoArquivo), stdin);
+        nomeDoArquivo[strcspn(nomeDoArquivo, "\n")] = '\0';
+
+        arquivo = fopen(nomeDoArquivo, "r");
     
+        if(arquivo == NULL){
+            printf("Erro ao abrir o arquivo.\nDeseja tentar novamente? (responda sim ou não)\n");
+            char resposta;//declara aqui para q seja criada apenas se necessario
+            scanf(" %c", &resposta);
+            getchar();
+            if(resposta != 's' && resposta != 'S'){
+                return 1;//encerra o programa se a resposnta for não
+            }
+         }
+    }while (arquivo == NULL);//continua pedindo o nome do arquivo ate que seja aberto com sucesso 
+
     while(fscanf(arquivo, "%s %i %s ", novoContato.nome, &novoContato.tel, novoContato.email) != EOF){
         espalhamento(tabelahash, novoContato);
     }

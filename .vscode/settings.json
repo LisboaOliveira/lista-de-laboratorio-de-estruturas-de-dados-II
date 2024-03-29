@@ -1,5 +1,6 @@
 {
     "files.associations": {
         "q5": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }

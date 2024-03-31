@@ -9,7 +9,7 @@
 #define aurea 0.618033
 
 typedef struct Contatos{
- char nome[25];
+ char nome[50];
  int tel;
  char email[40];
  bool livre;
@@ -21,25 +21,29 @@ void iniciarTabela (contato tabelahash[]){
     }
 }
 
-int acharchave(int chave){
-    return (int)(tamanho * fmod(chave * aurea, 1));
+char acharchave(char chave[50]){
+    int posicao = 0;
+    for(int i = 0; chave[i] != '\0'; i++){
+        posicao += chave[i];
+    }
+    return (int)(tamanho * fmod(posicao * aurea, 1));
 }
 
 void espalhamento(contato tabelahash[], contato novo){
-    int posicao = acharchave (novo.tel);
+    int posicao = acharchave (novo.nome);
     while(tabelahash[posicao].livre != true){
-        posicao = acharchave(posicao+1);
+        posicao = (acharchave(novo.nome) + 1);
     }
     tabelahash[posicao] = novo;
 }
 
-contato *busca (contato tabelahash[], int chave){
+contato *busca (contato tabelahash[], char chave[50]){
     int posicao = acharchave(chave);
     while(tabelahash [posicao].livre == false){
-        if(tabelahash[posicao].tel==chave){
+        if(tabelahash[posicao].nome == chave){
             return &tabelahash[posicao];
         }else{
-            posicao = acharchave(posicao + 1);
+            posicao = (acharchave(chave) + 1);
         }
     }
     return NULL;
@@ -55,15 +59,15 @@ void mostraTabela(contato tabelahash[]){
     }
 }
 
-void remover(contato tabelahash[], int chave){
+void remover(contato tabelahash[], char chave[50]){
     int posicao = acharchave(chave);
     while(tabelahash[posicao].livre == false){
-        if(tabelahash[posicao].tel == chave){
+        if(tabelahash[posicao].nome == chave){
             tabelahash[posicao].livre = true;
             printf("Contato removido.\n");
             return;
         }
-        posicao = acharchave(posicao+1);
+        posicao = (acharchave(chave) + 1);
     }
     printf("Contato não encontrado.\n");
 }
@@ -72,8 +76,8 @@ int main(){
     setlocale (LC_ALL, "Portuguese");
 
     contato tabelahash[tamanho], novoContato;
-    int opcao, chave;
-    char nomeDoArquivo[30];
+    int opcao;
+    char nomeDoArquivo[30], chave[50];
     FILE *arquivo;
 
     iniciarTabela(tabelahash);
@@ -133,9 +137,13 @@ int main(){
                 espalhamento(tabelahash, novoContato);
                 break;
             case 2:
-                printf("Informe o telefone do contato que deseja buscar:\n");
-                scanf("%i", &chave);
+                printf("Informe o nome do contato que deseja buscar:\n");
+                fgets(chave, sizeof(chave), stdin);
+                //remove o \n 
+                chave[strcspn(chave, "\n")] = '\0';
+
                 contato *resultado = busca(tabelahash, chave);
+
                 if(resultado->livre != true){
                 printf("Nome: %s\nTelefone: %i\nEmail: %s\n", resultado->nome, resultado->tel, resultado->email);
                 }else{
@@ -147,15 +155,18 @@ int main(){
                 mostraTabela(tabelahash);
                 break;
             case 4:
-                printf("Informe o telefone do contato que deseja remover:\n");
-                scanf("%i", &chave);
+                printf("Informe o nome do contato que deseja remover:\n");
+                fgets(chave, sizeof(chave), stdin);
+                //remove o \n 
+                chave[strcspn(chave, "\n")] = '\0';
+
                 remover(tabelahash, chave);
                 break;
             case 5:
                 printf("Até a próxima\n");
                 break;
             default:
-            printf("Opção invalida!\n");
+                printf("Opção invalida!\n");
 
         }
     }while(opcao != 5);

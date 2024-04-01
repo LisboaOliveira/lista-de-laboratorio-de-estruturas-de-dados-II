@@ -26,16 +26,19 @@ char acharchave(char chave[50]){
     for(int i = 0; chave[i] != '\0'; i++){
         posicao += chave[i];
     }
-    return (int)(tamanho * fmod(posicao * aurea, 1));
+    posicao = (int)(tamanho * fmod(posicao * aurea, 1));
+    posicao = fabs(posicao);//garante q o valor seja sempre positivo
+    return posicao;
 }
 
 void espalhamento(contato tabelahash[], contato novo){
     int posicao = acharchave (novo.nome);
-    while(tabelahash[posicao].livre != true){
+    if(tabelahash[posicao].livre != true){
         //posicao = (acharchave(novo.nome) + 1);
         posicao = (posicao + 1) % tamanho;
+    }else{
+        tabelahash[posicao] = novo;
     }
-    tabelahash[posicao] = novo;
 }
 
 contato *busca (contato tabelahash[], char chave[50]){
@@ -44,7 +47,8 @@ contato *busca (contato tabelahash[], char chave[50]){
         if(strcmp(tabelahash[posicao].nome, chave) == 0){
             return &tabelahash[posicao];
         }else{
-            posicao = (acharchave(chave) + 1);
+            //posicao = (acharchave(chave) + 1);
+            posicao = (posicao + 1) % tamanho;
         }
     }
     return NULL;

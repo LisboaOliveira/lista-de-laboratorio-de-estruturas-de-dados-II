@@ -129,7 +129,8 @@ int main(){
                 "5- Sair\n"
                 "Escolha uma opção: \n");
         scanf("%i", &opcao);
-
+        getchar();
+        
         switch(opcao){
             case 1:
                 printf("Informe o nome do contato:\n");

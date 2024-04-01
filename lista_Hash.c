@@ -10,8 +10,8 @@
 
 typedef struct Contatos{
  char nome[50];
- int tel;
- char email[40];
+ char tel[50];
+ char email[50];
  bool livre;
 }contato;
 
@@ -32,7 +32,8 @@ char acharchave(char chave[50]){
 void espalhamento(contato tabelahash[], contato novo){
     int posicao = acharchave (novo.nome);
     while(tabelahash[posicao].livre != true){
-        posicao = (acharchave(novo.nome) + 1);
+        //posicao = (acharchave(novo.nome) + 1);
+        posicao = (posicao + 1) % tamanho;
     }
     tabelahash[posicao] = novo;
 }
@@ -40,7 +41,7 @@ void espalhamento(contato tabelahash[], contato novo){
 contato *busca (contato tabelahash[], char chave[50]){
     int posicao = acharchave(chave);
     while(tabelahash [posicao].livre == false){
-        if(tabelahash[posicao].nome == chave){
+        if(strcmp(tabelahash[posicao].nome, chave) == 0){
             return &tabelahash[posicao];
         }else{
             posicao = (acharchave(chave) + 1);
@@ -52,7 +53,7 @@ contato *busca (contato tabelahash[], char chave[50]){
 void mostraTabela(contato tabelahash[]){
     for(int i=0; i < tamanho; i++){
         if(tabelahash[i].livre == false){
-            printf("Posicao %d:\n%s\n%d\n%s\n", i, tabelahash[i].nome, tabelahash[i].tel, tabelahash[i].email);
+            printf("Posicao %d:\n%s\n%s\n%s\n", i, tabelahash[i].nome, tabelahash[i].tel, tabelahash[i].email);
         }else{
             printf("Posicao %d: Vazio\n", i);
         }
@@ -62,14 +63,14 @@ void mostraTabela(contato tabelahash[]){
 void remover(contato tabelahash[], char chave[50]){
     int posicao = acharchave(chave);
     while(tabelahash[posicao].livre == false){
-        if(tabelahash[posicao].nome == chave){
+        if(strcmp(tabelahash[posicao].nome, chave) == 0){
             tabelahash[posicao].livre = true;
             printf("Contato removido.\n");
             return;
         }
         posicao = (acharchave(chave) + 1);
     }
-    printf("Contato não encontrado.\n");
+    printf("Contprintato não encontrado.\n");
 }
 
 int main(){
@@ -78,6 +79,7 @@ int main(){
     contato tabelahash[tamanho], novoContato;
     int opcao;
     char nomeDoArquivo[30], chave[50];
+ 
     FILE *arquivo;
 
     iniciarTabela(tabelahash);
@@ -100,8 +102,20 @@ int main(){
          }
     }while (arquivo == NULL);//continua pedindo o nome do arquivo ate que seja aberto com sucesso 
 
-    while(fscanf(arquivo, "%s %i %s ", novoContato.nome, &novoContato.tel, novoContato.email) != EOF){
-        espalhamento(tabelahash, novoContato);
+    char linha[60];
+
+    while(fgets(linha, sizeof(linha), arquivo)){
+        if(strstr(linha, "Nome: ") == linha){
+            strcpy(novoContato.nome, linha + strlen("Nome: "));
+        }
+        if(strstr(linha, "Telefone: ") == linha){
+            strcpy(novoContato.tel, linha + strlen("Telefone: "));
+        }
+        if(strstr(linha, "Email: ") == linha){
+            strcpy(novoContato.email, linha + strlen("Email: "));
+            espalhamento(tabelahash, novoContato);
+        }
+        
     }
 
     fclose(arquivo);
@@ -125,9 +139,9 @@ int main(){
 
                 
                 printf("Informe o telefone do contato:\n");
-                scanf("%i", &novoContato.tel);
-                //mesmo do anterior
-                getchar();
+                fgets(novoContato.tel, sizeof(novoContato.tel), stdin);
+                //remove o \n 
+                novoContato.tel[strcspn(novoContato.tel, "\n")] = '\0';
                 
                 printf("Informe o email do contato:\n");
                 fgets(novoContato.email, sizeof(novoContato.email), stdin);
@@ -142,10 +156,11 @@ int main(){
                 //remove o \n 
                 chave[strcspn(chave, "\n")] = '\0';
 
-                contato *resultado = busca(tabelahash, chave);
+                contato *resultado;
+                resultado = busca(tabelahash, chave);
 
                 if(resultado->livre != true){
-                printf("Nome: %s\nTelefone: %i\nEmail: %s\n", resultado->nome, resultado->tel, resultado->email);
+                printf("Nome: %s\nTelefone: %s\nEmail: %s\n", resultado->nome, resultado->tel, resultado->email);
                 }else{
                     printf("Contato não encontrado.\n");
                 }

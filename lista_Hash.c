@@ -80,6 +80,7 @@ int main()
             removerNovaLinha(linha);
             novoContato.email = (char *)malloc((strlen(linha + strlen("Email: ")) + 1) * sizeof(char));
             strcpy(novoContato.email, linha + strlen("Email: "));
+              
             espalhamento(tabelahash, novoContato);
         }
     }
@@ -177,22 +178,28 @@ char acharchave(char chave[50]){
         posicao += chave[i];
     }
     
-    return (posicao * aurea)/tamanho;
+    posicao = (posicao * aurea)/tamanho;
+    return posicao;
 }
 
 void espalhamento(contato tabelahash[], contato novo){
-    int posicao = acharchave (novo.nome);
+    int posicao = acharchave (novo.tel);
 
-    // Alocar memória dinamicamente para os campos nome, tel e email
-    tabelahash[posicao].nome = (char *)malloc((strlen(novo.nome) + 1) * sizeof(char));
-    tabelahash[posicao].tel = (char *)malloc((strlen(novo.tel) + 1) * sizeof(char));
-    tabelahash[posicao].email = (char *)malloc((strlen(novo.email) + 1) * sizeof(char));
 
-    strcpy(tabelahash[posicao].nome, novo.nome);
-    strcpy(tabelahash[posicao].tel, novo.tel);
-    strcpy(tabelahash[posicao].email, novo.email);
+    while (tabelahash[posicao].livre != 0){
+        posicao++; // Próxima posição na tabela (loop ao redor se necessário)
+    }
+        // Alocar memória dinamicamente para os campos nome, tel e email
+        tabelahash[posicao].nome = (char *)malloc((strlen(novo.nome) + 1) * sizeof(char));
+        tabelahash[posicao].tel = (char *)malloc((strlen(novo.tel) + 1) * sizeof(char));
+        tabelahash[posicao].email = (char *)malloc((strlen(novo.email) + 1) * sizeof(char));
 
-    tabelahash[posicao].livre = 1;
+        strcpy(tabelahash[posicao].nome, novo.nome);
+        strcpy(tabelahash[posicao].tel, novo.tel);
+        strcpy(tabelahash[posicao].email, novo.email);
+
+        tabelahash[posicao].livre = 1;
+    
 }
 
 contato busca(contato tabelahash[], char chave[50]){
